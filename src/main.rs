@@ -1,10 +1,10 @@
+use clap::{Arg, Command};
 use futures::{stream, StreamExt};
 use reqwest::Client;
 use std::{
     env,
     time::{Duration, Instant},
 };
-
 mod error;
 pub use error::Error;
 mod model;
@@ -15,14 +15,18 @@ mod common_ports;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    let args: Vec<String> = env::args().collect();
+    let cli = Command::new(clap::crate_name!())
+        .version(clap::crate_description!())
+        .about("Find subdomains and scan for open ports")
+        .arg(
+            Arg::new("target")
+                .required(true)
+                .help("domain name to search for subdomains"),
+        )
+        .arg_required_else_help(true)
+        .get_matches();
 
-    if args.len() != 2 {
-        println!("Usage: alfred-rs <example.com>");
-        return Ok(());
-    }
-
-    let target = args[1].as_str();
+    let target = cli.get_one::<String>("target").unwrap();
 
     let http_timeout = Duration::from_secs(10);
     let http_client = Client::builder().timeout(http_timeout).build()?;

@@ -14,4 +14,5 @@ serde = { version = "1", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["full"] }
 tokio-stream = "0.1.15"
 futures = "0.3.30"
+clap = { version = "4.5.4", features = ["cargo"] }
 
